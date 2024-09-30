@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\DotnetApiTemplate.Core\DotnetApiTemplate.Core.csproj" />
+        <ProjectReference Include="..\DotnetApiTemplate.Persistence.Postgres\DotnetApiTemplate.Persistence.Postgres.csproj" />
+        <ProjectReference Include="..\DotnetApiTemplate.Persistence.SqlServer\DotnetApiTemplate.Persistence.SqlServer.csproj" />
+        <ProjectReference Include="..\Shared\DotnetApiTemplate.Shared.Infrastructure\DotnetApiTemplate.Shared.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AWSSDK.S3" Version="3.7.401" />
+        <PackageReference Include="Azure.Storage.Blobs" Version="12.21.2" />
+        <PackageReference Include="Google.Cloud.Storage.V1" Version="4.10.0" />
+    </ItemGroup>
+</Project>
