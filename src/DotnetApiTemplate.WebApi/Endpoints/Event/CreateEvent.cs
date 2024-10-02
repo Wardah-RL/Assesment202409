@@ -79,7 +79,7 @@ namespace DotnetApiTemplate.WebApi.Endpoints.Event
 
       _paramQueue.KeyValues.Add("createEvent", getEventBroker);
 
-      await _emailQueue.SendQueueAsync(_paramQueue);
+      _emailQueue.SendQueueAsync(_paramQueue);
       #endregion
 
       return NoContent();

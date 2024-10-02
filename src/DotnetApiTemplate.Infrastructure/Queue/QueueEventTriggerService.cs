@@ -28,7 +28,7 @@ namespace DotnetApiTemplate.Infrastructure.Queue
       while (!stoppingToken.IsCancellationRequested)
       {
         _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-        //var coba = _getQueue.ReadQueueAsync();
+        _getQueue.GetQueueAsync();
         await Task.Delay(1000, stoppingToken);
       }
     }

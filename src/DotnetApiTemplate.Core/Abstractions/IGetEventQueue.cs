@@ -2,14 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DotnetApiTemplate.Core.Abstractions
 {
-  public interface ISendQueue
+  public interface IGetEventQueue
   {
-    void SendQueueAsync(SendQueueRequest paramQueue);
+    void GetQueueAsync();
   }
 }

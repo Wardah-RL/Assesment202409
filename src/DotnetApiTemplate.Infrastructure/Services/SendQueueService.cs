@@ -9,20 +9,20 @@ using DotnetApiTemplate.Shared.Abstractions.Models;
 
 namespace DotnetApiTemplate.Infrastructure.Services
 {
-  public class SendEventQueueService : ISendQueue
+  public class SendQueueService : ISendQueue
   {
     private readonly ConcurrentQueue<IDictionary<string, object>> _queue = new ConcurrentQueue<IDictionary<string, object>>();
     private readonly QueueConfiguration _queueConfiguration;
 
-    public SendEventQueueService(QueueConfiguration queueConfiguration) 
+    public SendQueueService(QueueConfiguration queueConfiguration) 
     {
       _queueConfiguration = queueConfiguration;
     }
 
-    public Task SendQueueAsync(SendQueueRequest paramQueue)
+    public void SendQueueAsync(SendQueueRequest paramQueue)
     {
       string connectionString = _queueConfiguration.Connection;
-      string queueName = null;
+      string queueName = string.Empty;
 
       if (paramQueue.Scenario == "Event") 
         queueName = _queueConfiguration.Name;
@@ -34,8 +34,6 @@ namespace DotnetApiTemplate.Infrastructure.Services
         string jsonString = JsonConvert.SerializeObject(paramQueue);
         queue.SendMessage(jsonString);
       }
-
-      return Task.CompletedTask;
     }
   }
 }
