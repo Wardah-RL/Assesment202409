@@ -9,7 +9,7 @@ using DotnetApiTemplate.Shared.Abstractions.Models;
 
 namespace DotnetApiTemplate.Infrastructure.Services
 {
-  public class SendEventQueueService : ISendEventQueue
+  public class SendEventQueueService : ISendQueue
   {
     private readonly ConcurrentQueue<IDictionary<string, object>> _queue = new ConcurrentQueue<IDictionary<string, object>>();
     private readonly QueueConfiguration _queueConfiguration;
@@ -22,12 +22,19 @@ namespace DotnetApiTemplate.Infrastructure.Services
     public Task SendQueueAsync(SendQueueRequest paramQueue)
     {
       string connectionString = _queueConfiguration.Connection;
-      string queueName = _queueConfiguration.Name;
+      string queueName = null;
 
-      QueueClient queue = new QueueClient(connectionString, queueName);
-      queue.Create();
-      string jsonString = JsonConvert.SerializeObject(paramQueue); 
-      queue.SendMessage(jsonString);
+      if (paramQueue.Scenario == "Event") 
+        queueName = _queueConfiguration.Name;
+
+      if(!string.IsNullOrEmpty(queueName) && !string.IsNullOrEmpty(connectionString))
+      {
+        QueueClient queue = new QueueClient(connectionString, queueName);
+        queue.Create();
+        string jsonString = JsonConvert.SerializeObject(paramQueue);
+        queue.SendMessage(jsonString);
+      }
+
       return Task.CompletedTask;
     }
   }
