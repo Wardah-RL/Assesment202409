@@ -14,21 +14,24 @@ using System.Threading.Tasks;
 
 namespace DotnetApiTemplate.Infrastructure.Queue
 {
-  public class QueueTriggerService : BackgroundService
+  public class QueueEventTriggerService : BackgroundService
   {
-    private readonly ILogger<QueueTriggerService> _logger;
-    public QueueTriggerService(ILogger<QueueTriggerService> logger)
+    private readonly ILogger<QueueEventTriggerService> _logger;
+    private readonly IGetEventQueue _getQueue;
+    public QueueEventTriggerService(ILogger<QueueEventTriggerService> logger, IGetEventQueue getQueue)
     {
       _logger = logger;
+      _getQueue = getQueue;
     }
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
       while (!stoppingToken.IsCancellationRequested)
       {
         _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-        GetQueueService.coba();
+        //var coba = _getQueue.ReadQueueAsync();
         await Task.Delay(1000, stoppingToken);
       }
     }
   }
+
 }

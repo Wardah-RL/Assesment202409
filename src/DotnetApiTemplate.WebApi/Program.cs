@@ -28,12 +28,13 @@ builder.Host.UseLogging();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSingleton<IAuthManager, AuthManager>();
-builder.Services.AddSingleton<ISendQueue, SendQueueService>();
+builder.Services.AddSingleton<ISendEventQueue, SendEventQueueService>();
+builder.Services.AddSingleton<IGetEventQueue, GetEventQueueService>();
 builder.Services.AddSwaggerGen2();
 builder.Services.AddAuth();
 builder.Services.AddGlobalExceptionHandler();
 builder.Services.AddCustomApiBehavior();
-builder.Services.AddHostedService<QueueTriggerService>();
+builder.Services.AddHostedService<QueueEventTriggerService>();
 
 //builder.Services.AddRedisCache(builder.Configuration);
 builder.Services.AddInternalMemoryCache();

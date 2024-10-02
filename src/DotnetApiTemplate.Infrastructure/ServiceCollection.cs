@@ -28,6 +28,7 @@ public static class ServiceCollection
     {
         services.AddCore();
         services.AddSharedInfrastructure();
+        services.AddQueueConfiguration();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IFileRepositoryService, FileRepositoryService>();
