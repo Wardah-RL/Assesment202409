@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
+using System.Text.Json;
 
 namespace DotnetApiTemplate.WebApi.Endpoints.Event
 {
@@ -24,7 +25,6 @@ namespace DotnetApiTemplate.WebApi.Endpoints.Event
     private readonly IDbContext _dbContext;
     private readonly IStringLocalizer<CreateEvent> _localizer;
     private readonly ISendQueue _emailQueue;
-    private SendQueueRequest _paramQueue = new SendQueueRequest();
     public CreateEvent(IDbContext dbContext,
         ISendQueue emailQueue,
         IStringLocalizer<CreateEvent> localizer)
@@ -53,7 +53,7 @@ namespace DotnetApiTemplate.WebApi.Endpoints.Event
       if (!validationResult.IsValid)
         return BadRequest(Error.Create(_localizer["invalid-parameter"], validationResult.Construct()));
 
-      var eventBroker = new MsEventBroker
+      var newEventBroker = new MsEventBroker
       {
         Id = new UuidV7().Value,
         Name = request.Name,
@@ -63,22 +63,21 @@ namespace DotnetApiTemplate.WebApi.Endpoints.Event
         JumlahTiket = request.JumlahTiket,
       };
 
-      await _dbContext.InsertAsync(eventBroker, cancellationToken);
+      await _dbContext.InsertAsync(newEventBroker, cancellationToken);
       await _dbContext.SaveChangesAsync(cancellationToken);
 
       #region MessageBroker
       var getEventBroker = await _dbContext.Set<MsEventBroker>()
-               .Where(e => e.Id == eventBroker.Id)
+               .Where(e => e.Id == newEventBroker.Id)
                .FirstOrDefaultAsync(cancellationToken);
 
-      _paramQueue.Scope = "Event";
-      _paramQueue.Scenario = "CreateEvent";
-
-      if (_paramQueue.KeyValues.ContainsKey("createEvent"))
-        _paramQueue.KeyValues.Remove("createEvent");
-
-      _paramQueue.KeyValues.Add("createEvent", getEventBroker);
-
+      SendQueueRequest _paramQueue = new SendQueueRequest
+      {
+        Message = JsonSerializer.Serialize(getEventBroker),
+        Scenario = "CreateEvent",
+        Scope = "Event"
+      };
+      
       _emailQueue.SendQueueAsync(_paramQueue);
       #endregion
 

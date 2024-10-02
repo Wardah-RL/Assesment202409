@@ -2,6 +2,7 @@ using DotnetApiTemplate.Core.Abstractions;
 using DotnetApiTemplate.Infrastructure;
 using DotnetApiTemplate.Infrastructure.Queue;
 using DotnetApiTemplate.Infrastructure.Services;
+using DotnetApiTemplate.Shared.Abstractions.Databases;
 using DotnetApiTemplate.Shared.Infrastructure.Api;
 using DotnetApiTemplate.Shared.Infrastructure.Cache;
 using DotnetApiTemplate.Shared.Infrastructure.Contexts;

@@ -24,7 +24,7 @@ namespace DotnetApiTemplate.Infrastructure.Services
       string connectionString = _queueConfiguration.Connection;
       string queueName = string.Empty;
 
-      if (paramQueue.Scenario == "Event") 
+      if (paramQueue.Scope == "Event")
         queueName = _queueConfiguration.Name;
 
       if(!string.IsNullOrEmpty(queueName) && !string.IsNullOrEmpty(connectionString))

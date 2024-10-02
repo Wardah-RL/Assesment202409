@@ -9,8 +9,8 @@ namespace DotnetApiTemplate.Core.Models
 {
   public class SendQueueRequest
   {
-    public IDictionary<string, object> KeyValues { get; set; } = new Dictionary<string, object>();
-    public string Scope { get; set; } = null!;
-    public string Scenario { get; set; } = null!;
+    public string Message { get; set; } = string.Empty;
+    public string Scope { get; set; } = string.Empty;
+    public string Scenario { get; set; } = string.Empty;
   }
 }
