@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DotnetApiTemplate.Core.Abstractions
 {
-  public interface ISendEventQueue
+  public interface ISendQueue
   {
     Task SendQueueAsync(SendQueueRequest paramQueue);
   }
