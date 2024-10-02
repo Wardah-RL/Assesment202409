@@ -36,9 +36,8 @@ namespace DotnetApiTemplate.WebApi.Endpoints.Event
 
     [HttpPost("event")]
     [Authorize]
-    [RequiredScope(typeof(UserManagementScope))]
     [SwaggerOperation(
-        Summary = "Create user API",
+        Summary = "Create event API",
         Description = "",
         OperationId = "Event.CreateEvent",
         Tags = new[] { "Event" })

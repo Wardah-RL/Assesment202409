@@ -62,8 +62,8 @@ namespace DotnetApiTemplate.Infrastructure.Services
               var dbContext = scope.ServiceProvider.GetRequiredService<IDbContext>();
 
               var getEventBroker = await dbContext.Set<MsEvent>()
-                              .Where(e => e.Id == getEvent.Id)
-                              .FirstOrDefaultAsync(cancellationToken);
+                             .Where(e => e.Id == getEvent.Id)
+                             .FirstOrDefaultAsync(cancellationToken);
 
               if (getEventBroker == null)
               {
@@ -82,28 +82,37 @@ namespace DotnetApiTemplate.Infrastructure.Services
               }
               else
               {
-                //Update event
-                bool isUpdate = false;
-
-                if (getEventBroker.Name != getEvent.Name)
-                  isUpdate = true;
-                if (getEventBroker.StartDate != getEvent.StartDate)
-                  isUpdate = true;
-                if (getEventBroker.EndDate != getEvent.EndDate)
-                  isUpdate = true;
-                if (getEventBroker.Lokasi != getEvent.Lokasi)
-                  isUpdate = true;
-                if (getEventBroker.JumlahTiket != getEvent.JumlahTiket)
-                  isUpdate = true;
-
-                if (isUpdate)
+                if (getMessage.Scenario=="DeleteEvent")
                 {
-                  dbContext.AttachEntity(getEventBroker);
-                  getEventBroker.Name = getEvent.Name;
-                  getEventBroker.StartDate = getEvent.StartDate;
-                  getEventBroker.EndDate = getEvent.EndDate;
-                  getEventBroker.Lokasi = getEvent.Lokasi;
-                  getEventBroker.JumlahTiket = getEvent.JumlahTiket;
+                  //Delete event
+                    dbContext.AttachEntity(getEventBroker);
+                    getEventBroker.IsDeleted = true;
+                }
+                else 
+                {
+                  //Update event
+                  bool isUpdate = false;
+
+                  if (getEventBroker.Name != getEvent.Name)
+                    isUpdate = true;
+                  if (getEventBroker.StartDate != getEvent.StartDate)
+                    isUpdate = true;
+                  if (getEventBroker.EndDate != getEvent.EndDate)
+                    isUpdate = true;
+                  if (getEventBroker.Lokasi != getEvent.Lokasi)
+                    isUpdate = true;
+                  if (getEventBroker.JumlahTiket != getEvent.JumlahTiket)
+                    isUpdate = true;
+
+                  if (isUpdate)
+                  {
+                    dbContext.AttachEntity(getEventBroker);
+                    getEventBroker.Name = getEvent.Name;
+                    getEventBroker.StartDate = getEvent.StartDate;
+                    getEventBroker.EndDate = getEvent.EndDate;
+                    getEventBroker.Lokasi = getEvent.Lokasi;
+                    getEventBroker.JumlahTiket = getEvent.JumlahTiket;
+                  }
                 }
               }
 

@@ -20,11 +20,11 @@ namespace DotnetApiTemplate.WebApi.Endpoints.Event
   public class UpdateEvent : BaseEndpointWithoutResponse<UpdateEventRequest>
   {
     private readonly IDbContext _dbContext;
-    private readonly IStringLocalizer<CreateEvent> _localizer;
+    private readonly IStringLocalizer<UpdateEventRequest> _localizer;
     private readonly ISendQueue _emailQueue;
     public UpdateEvent(IDbContext dbContext,
         ISendQueue emailQueue,
-        IStringLocalizer<CreateEvent> localizer)
+        IStringLocalizer<UpdateEventRequest> localizer)
     {
       _dbContext = dbContext;
       _emailQueue = emailQueue;
@@ -33,9 +33,8 @@ namespace DotnetApiTemplate.WebApi.Endpoints.Event
 
     [HttpPut("event")]
     [Authorize]
-    [RequiredScope(typeof(UserManagementScope))]
     [SwaggerOperation(
-        Summary = "Update user API",
+        Summary = "Update event API",
         Description = "",
         OperationId = "Event.UpdateEvent",
         Tags = new[] { "Event" })
