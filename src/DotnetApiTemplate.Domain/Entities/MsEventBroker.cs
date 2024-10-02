@@ -13,6 +13,6 @@ namespace DotnetApiTemplate.Domain.Entities
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public string Lokasi { get; set; } = null!;
-    public string JumlahTiket { get; set; } = null!;
+    public int JumlahTiket { get; set; }
   }
 }
