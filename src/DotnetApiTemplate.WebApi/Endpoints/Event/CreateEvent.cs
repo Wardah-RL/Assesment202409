@@ -1,6 +1,7 @@
 ﻿using DotnetApiTemplate.Core.Abstractions;
 using DotnetApiTemplate.Core.Models;
 using DotnetApiTemplate.Domain.Entities;
+using DotnetApiTemplate.Infrastructure.Services.Request;
 using DotnetApiTemplate.Shared.Abstractions.Databases;
 using DotnetApiTemplate.Shared.Abstractions.Encryption;
 using DotnetApiTemplate.Shared.Abstractions.Helpers;
@@ -58,16 +59,42 @@ namespace DotnetApiTemplate.WebApi.Endpoints.Event
         Name = request.Name,
         StartDate = request.StartDate,
         EndDate = request.EndDate,
-        Lokasi = request.Lokasi,
-        JumlahTiket = request.JumlahTiket,
+        CountTicket = request.CountTicket,
       };
-
       await _dbContext.InsertAsync(newEventBroker, cancellationToken);
+
+      foreach (var item in request.Location)
+      {
+        var newEventLocationBroker = new MsEventLocationBroker
+        {
+          Id = new UuidV7().Value,
+          Location = item,
+          EventBrokerId = newEventBroker.Id
+        };
+        await _dbContext.InsertAsync(newEventLocationBroker, cancellationToken);
+      }
+
       await _dbContext.SaveChangesAsync(cancellationToken);
 
       #region MessageBroker
       var getEventBroker = await _dbContext.Set<MsEventBroker>()
+               .Include(e => e.EventLocationBroker)
                .Where(e => e.Id == newEventBroker.Id)
+               .Select(e => new EventMessageRequest
+               {
+                 EventId = e.Id,
+                 CountTicket = e.CountTicket,
+                 EndDate = e.EndDate,
+                 StartDate = e.StartDate,
+                 Location = e.EventLocationBroker.Select(f => new EventLocationRequest
+                 {
+                   EventId = f.EventBrokerId,
+                   EventLocationId = f.Id,
+                   Location = f.Location
+                 }).ToList(),
+                 Name = e.Name
+
+               })
                .FirstOrDefaultAsync(cancellationToken);
 
       SendQueueRequest _paramQueue = new SendQueueRequest
@@ -76,7 +103,7 @@ namespace DotnetApiTemplate.WebApi.Endpoints.Event
         Scenario = "CreateEvent",
         Scope = "Event"
       };
-      
+
       _emailQueue.SendQueueAsync(_paramQueue);
       #endregion
 

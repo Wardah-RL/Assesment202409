@@ -9,11 +9,12 @@ using System.Threading.Tasks;
 
 namespace DotnetApiTemplate.Persistence.Postgres.Configurations
 {
-  public class MsEventBrokerConfiguration : BaseEntityConfiguration<MsEventBroker>
+
+  public class MsTicketConfiguration : BaseEntityConfiguration<MsTicket>
   {
-    protected override void EntityConfiguration(EntityTypeBuilder<MsEventBroker> builder)
+    protected override void EntityConfiguration(EntityTypeBuilder<MsTicket> builder)
     {
-      builder.Property(e => e.Name).HasMaxLength(256);
+      builder.Property(e => e.TrainName).HasMaxLength(256);
     }
   }
 }

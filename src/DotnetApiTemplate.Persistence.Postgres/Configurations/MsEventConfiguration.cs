@@ -14,7 +14,6 @@ namespace DotnetApiTemplate.Persistence.Postgres.Configurations
     protected override void EntityConfiguration(EntityTypeBuilder<MsEvent> builder)
     {
       builder.Property(e => e.Name).HasMaxLength(256);
-      builder.Property(e => e.Lokasi).HasMaxLength(512);
     }
   }
 }

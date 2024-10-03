@@ -51,17 +51,29 @@ namespace DotnetApiTemplate.WebApi.Endpoints.Event
       else
         queryable = queryable.OrderBy("Name", "ASC");
 
-      var getEvent = queryable
-          .Select(e => new GetEventResponse
+      var listEvent = queryable
+          .Select(e => new 
           {
             EventId = e.Id,
             Name = e.Name,
             StartDate = e.StartDate,
             EndDate = e.EndDate,
-            JumlahTiket = e.JumlahTiket,
-            Lokasi = e.Lokasi,
+            CountTicket = e.CountTicket,
+            Location = e.EventLocation,
           })
           .Skip(request.CalculateSkip())
+          .ToList();
+
+      var getEvent = listEvent
+          .Select(e => new GetEventResponse
+          {
+            EventId = e.EventId,
+            Name = e.Name,
+            StartDate = e.StartDate,
+            EndDate = e.EndDate,
+            CountTicket = e.CountTicket,
+            Location = String.Join(",", e.Location.Select(f=>f.Location).ToList()),
+          })
           .ToList();
 
       var totalRowFilter = getEvent.Count;

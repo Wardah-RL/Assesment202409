@@ -12,7 +12,7 @@ namespace DotnetApiTemplate.Domain.Entities
     public string Name { get; set; } = null!;
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
-    public string Lokasi { get; set; } = null!;
-    public int JumlahTiket { get; set; }
+    public int CountTicket { get; set; }
+    public ICollection<MsEventLocationBroker> EventLocationBroker { get; set; } = new HashSet<MsEventLocationBroker>();
   }
 }

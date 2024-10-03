@@ -9,6 +9,6 @@ namespace DotnetApiTemplate.Shared.Abstractions.Models
   public class QueueConfiguration
   {
     public string Connection { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
+    public string NameEvent { get; set; } = string.Empty;
   }
 }

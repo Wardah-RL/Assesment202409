@@ -3,6 +3,7 @@ using System;
 using DotnetApiTemplate.Persistence.Postgres;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DotnetApiTemplate.Persistence.Postgres.Migrations
 {
     [DbContext(typeof(PostgresDbContext))]
-    partial class PostgresDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241002171304_MsTicket")]
+    partial class MsTicket
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -179,6 +182,11 @@ namespace DotnetApiTemplate.Persistence.Postgres.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(256)
@@ -259,6 +267,11 @@ namespace DotnetApiTemplate.Persistence.Postgres.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(256)
@@ -287,158 +300,6 @@ namespace DotnetApiTemplate.Persistence.Postgres.Migrations
                     b.HasIndex("LastUpdatedByName");
 
                     b.ToTable("MsEventBroker");
-                });
-
-            modelBuilder.Entity("DotnetApiTemplate.Domain.Entities.MsEventLocation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("CreatedAtServer")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("CreatedByFullName")
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
-
-                    b.Property<string>("CreatedByName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<Guid>("EventId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime?>("LastUpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("LastUpdatedAtServer")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("LastUpdatedBy")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("LastUpdatedByFullName")
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
-
-                    b.Property<string>("LastUpdatedByName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
-
-                    b.Property<int>("StatusRecord")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedByFullName");
-
-                    b.HasIndex("CreatedByName");
-
-                    b.HasIndex("EventId");
-
-                    b.HasIndex("Id");
-
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Id"), "hash");
-
-                    b.HasIndex("LastUpdatedBy");
-
-                    b.HasIndex("LastUpdatedByFullName");
-
-                    b.HasIndex("LastUpdatedByName");
-
-                    b.ToTable("MsEventLocation");
-                });
-
-            modelBuilder.Entity("DotnetApiTemplate.Domain.Entities.MsEventLocationBroker", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("CreatedAtServer")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("CreatedByFullName")
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
-
-                    b.Property<string>("CreatedByName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<Guid>("EventBrokerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime?>("LastUpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("LastUpdatedAtServer")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("LastUpdatedBy")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("LastUpdatedByFullName")
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
-
-                    b.Property<string>("LastUpdatedByName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
-
-                    b.Property<int>("StatusRecord")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedByFullName");
-
-                    b.HasIndex("CreatedByName");
-
-                    b.HasIndex("EventBrokerId");
-
-                    b.HasIndex("Id");
-
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Id"), "hash");
-
-                    b.HasIndex("LastUpdatedBy");
-
-                    b.HasIndex("LastUpdatedByFullName");
-
-                    b.HasIndex("LastUpdatedByName");
-
-                    b.ToTable("MsEventLocationBroker");
                 });
 
             modelBuilder.Entity("DotnetApiTemplate.Domain.Entities.MsTicket", b =>
@@ -1114,28 +975,6 @@ namespace DotnetApiTemplate.Persistence.Postgres.Migrations
                     b.ToTable("UserToken");
                 });
 
-            modelBuilder.Entity("DotnetApiTemplate.Domain.Entities.MsEventLocation", b =>
-                {
-                    b.HasOne("DotnetApiTemplate.Domain.Entities.MsEvent", "Event")
-                        .WithMany("EventLocation")
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Event");
-                });
-
-            modelBuilder.Entity("DotnetApiTemplate.Domain.Entities.MsEventLocationBroker", b =>
-                {
-                    b.HasOne("DotnetApiTemplate.Domain.Entities.MsEventBroker", "EventBroker")
-                        .WithMany("EventLocationBroker")
-                        .HasForeignKey("EventBrokerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("EventBroker");
-                });
-
             modelBuilder.Entity("DotnetApiTemplate.Domain.Entities.RoleScope", b =>
                 {
                     b.HasOne("DotnetApiTemplate.Domain.Entities.Role", "Role")
@@ -1186,16 +1025,6 @@ namespace DotnetApiTemplate.Persistence.Postgres.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DotnetApiTemplate.Domain.Entities.MsEvent", b =>
-                {
-                    b.Navigation("EventLocation");
-                });
-
-            modelBuilder.Entity("DotnetApiTemplate.Domain.Entities.MsEventBroker", b =>
-                {
-                    b.Navigation("EventLocationBroker");
                 });
 
             modelBuilder.Entity("DotnetApiTemplate.Domain.Entities.Role", b =>

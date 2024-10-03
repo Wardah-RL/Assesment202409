@@ -3,6 +3,7 @@ using Azure.Storage.Queues;
 using DotnetApiTemplate.Core.Abstractions;
 using DotnetApiTemplate.Core.Models;
 using DotnetApiTemplate.Domain.Entities;
+using DotnetApiTemplate.Infrastructure.Services.Request;
 using DotnetApiTemplate.Shared.Abstractions.Databases;
 using DotnetApiTemplate.Shared.Abstractions.Helpers;
 using DotnetApiTemplate.Shared.Abstractions.Models;
@@ -35,7 +36,7 @@ namespace DotnetApiTemplate.Infrastructure.Services
     public async void GetQueueAsync()
     {
       string connectionString = _queueConfiguration.Connection;
-      string queueName = _queueConfiguration.Name;
+      string queueName = _queueConfiguration.NameEvent;
 
       QueueClient queue = new QueueClient(connectionString, queueName);
 
@@ -55,63 +56,91 @@ namespace DotnetApiTemplate.Infrastructure.Services
             if (getMessage.Message == null)
               continue;
 
-            var getEvent = JsonConvert.DeserializeObject<MsEventBroker>(getMessage.Message);
+            var getEventMessage = JsonConvert.DeserializeObject<EventMessageRequest>(getMessage.Message);
 
             using (var scope = _serviceProvider.CreateScope())
             {
               var dbContext = scope.ServiceProvider.GetRequiredService<IDbContext>();
 
-              var getEventBroker = await dbContext.Set<MsEvent>()
-                             .Where(e => e.Id == getEvent.Id)
+              var getEvent = await dbContext.Set<MsEvent>()
+                              .Include(e=>e.EventLocation)
+                             .Where(e => e.Id == getEventMessage.EventId)
                              .FirstOrDefaultAsync(cancellationToken);
 
-              if (getEventBroker == null)
+              if (getEvent == null)
               {
                 //create event
                 var newEvent = new MsEvent
                 {
-                  Id = getEvent.Id,
-                  Name = getEvent.Name,
-                  StartDate = getEvent.StartDate,
-                  EndDate = getEvent.EndDate,
-                  Lokasi = getEvent.Lokasi,
-                  JumlahTiket = getEvent.JumlahTiket,
+                  Id = getEventMessage.EventId,
+                  Name = getEventMessage.Name,
+                  StartDate = getEventMessage.StartDate,
+                  EndDate = getEventMessage.EndDate,
+                  CountTicket = getEventMessage.CountTicket,
                 };
-
                 await dbContext.InsertAsync(newEvent, cancellationToken);
+
+                foreach (var item in getEventMessage.Location)
+                {
+                  var newEventLocation = new MsEventLocation
+                  {
+                    Id = item.EventLocationId,
+                    Location = item.Location,
+                    EventId = item.EventId
+                  };
+                  await dbContext.InsertAsync(newEventLocation, cancellationToken);
+                }
               }
               else
               {
                 if (getMessage.Scenario=="DeleteEvent")
                 {
                   //Delete event
-                    dbContext.AttachEntity(getEventBroker);
-                    getEventBroker.IsDeleted = true;
+                  dbContext.AttachEntity(getEvent);
+                  getEvent.IsDeleted = true;
+
+                  foreach (var Item in getEvent.EventLocation)
+                  {
+                    dbContext.AttachEntity(Item);
+                    Item.IsDeleted = true;
+                  }
                 }
                 else 
                 {
                   //Update event
-                  bool isUpdate = false;
+                  dbContext.AttachEntity(getEvent);
+                  getEvent.Name = getEventMessage.Name;
+                  getEvent.StartDate = getEventMessage.StartDate;
+                  getEvent.EndDate = getEventMessage.EndDate;
+                  getEvent.CountTicket = getEventMessage.CountTicket;
+                  await dbContext.SaveChangesAsync(cancellationToken);
 
-                  if (getEventBroker.Name != getEvent.Name)
-                    isUpdate = true;
-                  if (getEventBroker.StartDate != getEvent.StartDate)
-                    isUpdate = true;
-                  if (getEventBroker.EndDate != getEvent.EndDate)
-                    isUpdate = true;
-                  if (getEventBroker.Lokasi != getEvent.Lokasi)
-                    isUpdate = true;
-                  if (getEventBroker.JumlahTiket != getEvent.JumlahTiket)
-                    isUpdate = true;
-
-                  if (isUpdate)
+                  foreach (var Item in getEvent.EventLocation)
                   {
-                    dbContext.AttachEntity(getEventBroker);
-                    getEventBroker.Name = getEvent.Name;
-                    getEventBroker.StartDate = getEvent.StartDate;
-                    getEventBroker.EndDate = getEvent.EndDate;
-                    getEventBroker.Lokasi = getEvent.Lokasi;
-                    getEventBroker.JumlahTiket = getEvent.JumlahTiket;
+                    var getLocationRequest = getEventMessage.Location.Where(e => e.Location == Item.Location).FirstOrDefault();
+
+                    if (getLocationRequest == null)
+                    {
+                      dbContext.AttachEntity(Item);
+                      Item.IsDeleted = true;
+                    }
+                  }
+
+                  foreach (var item in getEventMessage.Location)
+                  {
+                    var getLocationDb = getEvent.EventLocation.Where(e => e.Location == item.Location).FirstOrDefault();
+
+                    if (getLocationDb == null)
+                    {
+                      var newEventLocation = new MsEventLocation
+                      {
+                        Id = item.EventLocationId,
+                        Location = item.Location,
+                        EventId = item.EventId
+                      };
+                      await dbContext.InsertAsync(newEventLocation, cancellationToken);
+
+                    }
                   }
                 }
               }
@@ -125,7 +154,7 @@ namespace DotnetApiTemplate.Infrastructure.Services
         }
         catch (Exception ex) 
         { 
-        
+          
         }
         
       }

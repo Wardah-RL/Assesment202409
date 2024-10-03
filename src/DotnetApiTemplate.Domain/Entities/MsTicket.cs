@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace DotnetApiTemplate.Domain.Entities
 {
-  public class MsEvent : BaseEntity
+  public class MsTicket : BaseEntity
   {
-    public string Name { get; set; } = null!;
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
+    public string TrainName { get; set; } = string.Empty;
+    public DateTime Date { get; set; }
+    public TimeSpan StartTime { get; set; }
+    public TimeSpan EndTime { get; set; }
     public int CountTicket { get; set; }
-    public ICollection<MsEventLocation> EventLocation { get; set; } = new HashSet<MsEventLocation>();
   }
 }

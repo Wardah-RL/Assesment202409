@@ -1,6 +1,7 @@
 ﻿using DotnetApiTemplate.Core.Abstractions;
 using DotnetApiTemplate.Core.Models;
 using DotnetApiTemplate.Domain.Entities;
+using DotnetApiTemplate.Infrastructure.Services.Request;
 using DotnetApiTemplate.Shared.Abstractions.Contexts;
 using DotnetApiTemplate.Shared.Abstractions.Databases;
 using DotnetApiTemplate.WebApi.Endpoints.Event.Request;
@@ -41,22 +42,44 @@ namespace DotnetApiTemplate.WebApi.Endpoints.Event
         DeleteEventRequest request,
         CancellationToken cancellationToken = new())
     {
-      var eventBroker = await _dbContext.Set<MsEventBroker>()
+      var geteventBroker = await _dbContext.Set<MsEventBroker>()
+                      .Include(e=>e.EventLocationBroker)
                       .Where(e => e.Id == request.EventId)
                       .FirstOrDefaultAsync(cancellationToken);
 
-      if (eventBroker == null)
+      if (geteventBroker == null)
         return BadRequest(Error.Create(string.Format(_localizer["event-not-found"], request.EventId)));
 
-      _dbContext.AttachEntity(eventBroker);
-      eventBroker.IsDeleted = true;
+      _dbContext.AttachEntity(geteventBroker);
+      geteventBroker.IsDeleted = true;
+
+      foreach (var Item in geteventBroker.EventLocationBroker)
+      {
+          _dbContext.AttachEntity(Item);
+          Item.IsDeleted = true;
+      }
 
       await _dbContext.SaveChangesAsync(cancellationToken);
 
       #region MessageBroker
+      EventMessageRequest getEventBrokerMessage = new EventMessageRequest
+      {
+        EventId = geteventBroker.Id,
+        CountTicket = geteventBroker.CountTicket,
+        EndDate = geteventBroker.EndDate,
+        StartDate = geteventBroker.StartDate,
+        Location = geteventBroker.EventLocationBroker.Select(f => new EventLocationRequest
+        {
+          EventId = f.EventBrokerId,
+          EventLocationId = f.Id,
+          Location = f.Location
+        }).ToList(),
+        Name = geteventBroker.Name
+      };
+      
       SendQueueRequest _paramQueue = new SendQueueRequest
       {
-        Message = JsonSerializer.Serialize(eventBroker),
+        Message = JsonSerializer.Serialize(getEventBrokerMessage),
         Scenario = "DeleteEvent",
         Scope = "Event"
       };
