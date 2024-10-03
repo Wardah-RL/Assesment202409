@@ -7,6 +7,7 @@ namespace DotnetApiTemplate.WebApi.Endpoints.Event.Validator
   {
     public UpdateEventValidator()
     {
+
       RuleFor(e => e.EventId).NotNull().NotEmpty();
       RuleFor(e => e.Name).NotNull().NotEmpty();
       RuleFor(e => e.Location).NotNull().NotEmpty();
