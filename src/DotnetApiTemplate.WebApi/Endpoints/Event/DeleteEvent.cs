@@ -81,7 +81,7 @@ namespace DotnetApiTemplate.WebApi.Endpoints.Event
       {
         Message = JsonSerializer.Serialize(getEventBrokerMessage),
         Scenario = "DeleteEvent",
-        Scope = "Event"
+        QueueName = "event"
       };
 
       _emailQueue.SendQueueAsync(_paramQueue);

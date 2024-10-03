@@ -101,7 +101,7 @@ namespace DotnetApiTemplate.WebApi.Endpoints.Event
       {
         Message = JsonSerializer.Serialize(getEventBroker),
         Scenario = "CreateEvent",
-        Scope = "Event"
+        QueueName = "event"
       };
 
       _emailQueue.SendQueueAsync(_paramQueue);

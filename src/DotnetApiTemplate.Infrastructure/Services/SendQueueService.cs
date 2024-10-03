@@ -6,6 +6,7 @@ using DotnetApiTemplate.Core.Models;
 using Newtonsoft.Json;
 using System.Text.Json.Nodes;
 using DotnetApiTemplate.Shared.Abstractions.Models;
+using Azure.Identity;
 
 namespace DotnetApiTemplate.Infrastructure.Services
 {
@@ -19,17 +20,14 @@ namespace DotnetApiTemplate.Infrastructure.Services
       _queueConfiguration = queueConfiguration;
     }
 
-    public void SendQueueAsync(SendQueueRequest paramQueue)
+    public async void SendQueueAsync(SendQueueRequest paramQueue)
     {
       string connectionString = _queueConfiguration.Connection;
-      string queueName = string.Empty;
+      QueueClient queue = new QueueClient(connectionString,paramQueue.QueueName);
+      await queue.CreateIfNotExistsAsync();
 
-      if (paramQueue.Scope == "Event")
-        queueName = _queueConfiguration.NameEvent;
-
-      if(!string.IsNullOrEmpty(queueName) && !string.IsNullOrEmpty(connectionString))
+      if (queue.Exists())
       {
-        QueueClient queue = new QueueClient(connectionString, queueName);
         queue.Create();
         string jsonString = JsonConvert.SerializeObject(paramQueue);
         queue.SendMessage(jsonString);

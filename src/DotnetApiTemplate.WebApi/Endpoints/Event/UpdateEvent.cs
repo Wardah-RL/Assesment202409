@@ -51,7 +51,7 @@ namespace DotnetApiTemplate.WebApi.Endpoints.Event
         return BadRequest(Error.Create(_localizer["invalid-parameter"], validationResult.Construct()));
 
       var getEventBroker = await _dbContext.Set<MsEventBroker>()
-                              .Include(e=>e.EventLocationBroker)
+                              .Include(e => e.EventLocationBroker)
                               .Where(e => e.Id == request.EventId)
                               .FirstOrDefaultAsync(cancellationToken);
 
@@ -64,11 +64,11 @@ namespace DotnetApiTemplate.WebApi.Endpoints.Event
       getEventBroker.EndDate = request.EndDate;
       getEventBroker.CountTicket = request.CountTicket;
 
-      foreach(var Item in getEventBroker.EventLocationBroker)
+      foreach (var Item in getEventBroker.EventLocationBroker)
       {
         var getLocationRequest = request.Location.Where(e => e == Item.Location).FirstOrDefault();
 
-        if (getLocationRequest==null)
+        if (getLocationRequest == null)
         {
           _dbContext.AttachEntity(Item);
           Item.IsDeleted = true;
@@ -117,7 +117,7 @@ namespace DotnetApiTemplate.WebApi.Endpoints.Event
       {
         Message = JsonSerializer.Serialize(getEventBrokerMessage),
         Scenario = "UpdateEvent",
-        Scope = "Event"
+        QueueName = "event"
       };
 
       _emailQueue.SendQueueAsync(_paramQueue);

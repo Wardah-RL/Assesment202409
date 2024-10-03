@@ -10,7 +10,7 @@ namespace DotnetApiTemplate.Core.Models
   public class SendQueueRequest
   {
     public string Message { get; set; } = string.Empty;
-    public string Scope { get; set; } = string.Empty;
+    public string QueueName { get; set; } = string.Empty;
     public string Scenario { get; set; } = string.Empty;
   }
 }
